@@ -36,11 +36,27 @@ async function main() {
 main()
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 //----- signup point to test working with backend and also sql injection ----
 
 app.post('/signup', async (req, res)=>{
     const {username, email, password }=req.body
+    const {city, country, street, pincode }=req.body
     let insertQuery;
+    let users2_query;
+    let addresses2_query;
 
     try {
 
@@ -52,22 +68,59 @@ app.post('/signup', async (req, res)=>{
     //----------------------this is the sql injection---> 
         // " 123456'); DELETE FROM users; INSERT INTO users (username, email, password) VALUES ('hacked' 'hacked@gmail.com' 'hacked123 " 
 
-    //updated code that remove sql injection vulnerabilities...
-        insertQuery=`INSERT INTO users (username, email, password) VALUES ($1, $2, $3)` //i.e value -1,2,3
-
-        const response = await pgClient.query(insertQuery, [username, email, password])
-        console.log('Response ---> '+response)
 
 
 
 
-        console.log(response.rows)
-        console.log('insertQuery : '+ insertQuery)
+
+    // // ------------- updated code that remove sql injection vulnerabilities...-------------------
+        // insertQuery=`INSERT INTO users (username, email, password) VALUES ($1, $2, $3)` //i.e value -1,2,3
+
+        // const response = await pgClient.query(insertQuery, [username, email, password])
+        // console.log('Response ---> '+response)
+
+
+        // console.log(response.rows)
+        // console.log('insertQuery : '+ insertQuery)
+
+
+
+// ---------------- Relationship in sql -------------------
+
+//------------------ Transaction in sql -------------------
+    await pgClient.query('BEGIN')  //-----start of the transaction
+
+
+
+    users2_query =`INSERT INTO users2 (username, email, password) 
+        VALUES ($1, $2, $3) RETURNING id`
+    const response1=await pgClient.query(users2_query, [username, email, password])    
+
+    addresses2_query=`INSERT INTO addresses2 (user_id, city, country, street, pincode)
+                         VALUES ($1,$2,$3,$4,$5)`
+    const user_id=response1.rows[0].id
+    const response2=await pgClient.query(addresses2_query, [user_id, city, country, street, pincode])
+
+
+
+
+    await pgClient.query('COMMIT');  //----commit the transaction-
+
+
+
+
+
+    
+
+
+
+
+
         res.status(200).json({
             message:"Successfully signed up"
         })
         
-    } catch (error) {
+    }catch (error) {
         console.log('Error in signing in --> '+ error)
         res.status(403).json({
             message :"Error in signing up",
@@ -75,11 +128,35 @@ app.post('/signup', async (req, res)=>{
         })
     }
 
-    console.log(insertQuery)
+    console.log('user_query ---> ', users2_query)
+    console.log('addresses query -----> ', addresses2_query)
 
+})
+
+
+
+
+
+//----------------------------------- JOINS in SQL  ------------------------------------------
+app.get('/metadata', (req, res)=>{
+const id=req.query.id
 
 
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 app.listen(3000, ()=>{
