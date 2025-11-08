@@ -1,7 +1,7 @@
 {
   "name": "prisma-learning",
   "version": "1.0.0",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "npx ts-node src/index.ts",
     "build": "tsc",
@@ -10,12 +10,12 @@
     "prisma:migrate": "npx prisma migrate dev"
   },
   "devDependencies": {
+    "@types/node": "^20.x",
     "ts-node": "^10.x",
-    "typescript": "^5.x",
-    "@types/node": "^20.x"
+    "typescript": "^5.x"
   },
   "dependencies": {
     "@prisma/client": "^6.x",
-    "prisma": "^6.x"
+    "prisma": "^6.19.0"
   }
 }
