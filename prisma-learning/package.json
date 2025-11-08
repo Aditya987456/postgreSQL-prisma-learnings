@@ -1,4 +1,21 @@
 {
-  "name": "create-p",
-  "version": "0.0.1"
+  "name": "prisma-learning",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "npx ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "prisma:studio": "npx prisma studio",
+    "prisma:migrate": "npx prisma migrate dev"
+  },
+  "devDependencies": {
+    "ts-node": "^10.x",
+    "typescript": "^5.x",
+    "@types/node": "^20.x"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.x",
+    "prisma": "^6.x"
+  }
 }
